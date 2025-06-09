@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <!-- Chart.js for data visualization -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
   <script>
     // Configure Tailwind with custom theme
     tailwind.config = {
@@ -929,32 +930,48 @@
     // Chart.js - Tech Debt Chart
     const techDebtCtx = document.getElementById('techDebtChart').getContext('2d');
     
+    // 创建更详细的数据集
+    const techDebtData = {
+      labels: ['Completed (Q1)', 'Completed (Q2)', 'In Progress (Q1)', 'In Progress (Q2)', 'In Progress (Q3)', 'Not Started (Q3)', 'Not Started (Q4)'],
+      datasets: [{
+        data: [6, 5, 1, 2, 1, 6, 7],
+        backgroundColor: [
+          'rgba(34, 197, 94, 0.9)',  // 深绿色 - 已完成Q1
+          'rgba(34, 197, 94, 0.7)',  // 浅绿色 - 已完成Q2
+          'rgba(59, 130, 246, 0.9)',  // 深蓝色 - 进行中Q1
+          'rgba(59, 130, 246, 0.7)',  // 中蓝色 - 进行中Q2
+          'rgba(59, 130, 246, 0.5)',  // 浅蓝色 - 进行中Q3
+          'rgba(239, 68, 68, 0.7)',   // 深红色 - 未开始Q3
+          'rgba(239, 68, 68, 0.5)'    // 浅红色 - 未开始Q4
+        ],
+        borderColor: [
+          'rgba(34, 197, 94, 1)',
+          'rgba(34, 197, 94, 1)',
+          'rgba(59, 130, 246, 1)',
+          'rgba(59, 130, 246, 1)',
+          'rgba(59, 130, 246, 1)',
+          'rgba(239, 68, 68, 1)',
+          'rgba(239, 68, 68, 1)'
+        ],
+        borderWidth: 1,
+        hoverOffset: 15
+      }]
+    };
+    
+    // 计算总数
+    const total = techDebtData.datasets[0].data.reduce((a, b) => a + b, 0);
+    
     const techDebtChart = new Chart(techDebtCtx, {
       type: 'doughnut',
-      data: {
-        labels: ['Completed', 'In Progress', 'Not Started'],
-        datasets: [{
-          data: [11, 4, 13],
-          backgroundColor: [
-            'rgba(34, 197, 94, 0.7)',
-            'rgba(59, 130, 246, 0.7)',
-            'rgba(239, 68, 68, 0.7)'
-          ],
-          borderColor: [
-            'rgba(34, 197, 94, 1)',
-            'rgba(59, 130, 246, 1)',
-            'rgba(239, 68, 68, 1)'
-          ],
-          borderWidth: 1
-        }]
-      },
+      data: techDebtData,
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        cutout: '60%',  // 增加中心空白区域
         plugins: {
           title: {
             display: true,
-            text: 'Technical Debt Status',
+            text: 'Technical Debt Status (2025)',
             font: {
               size: 16,
               weight: 'bold'
@@ -962,9 +979,50 @@
           },
           legend: {
             position: 'right',
+            labels: {
+              usePointStyle: true,
+              padding: 15
+            }
           },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                const label = context.label || '';
+                const value = context.raw || 0;
+                const percentage = Math.round((value / total) * 100);
+                return `${label}: ${value} (${percentage}%)`;
+              }
+            }
+          }
         }
-      }
+      },
+      plugins: [{
+        id: 'centerText',
+        beforeDraw: function(chart) {
+          const width = chart.width;
+          const height = chart.height;
+          const ctx = chart.ctx;
+          
+          ctx.restore();
+          ctx.font = 'bold 30px "Inter", sans-serif';
+          ctx.textBaseline = 'middle';
+          ctx.fillStyle = chart.options.color || '#64748b';
+          
+          const text = '28';
+          const textX = Math.round((width - ctx.measureText(text).width) / 2);
+          const textY = height / 2 - 15;
+          
+          ctx.fillText(text, textX, textY);
+          
+          ctx.font = '16px "Inter", sans-serif';
+          const subText = 'Total';
+          const subTextX = Math.round((width - ctx.measureText(subText).width) / 2);
+          const subTextY = height / 2 + 15;
+          
+          ctx.fillText(subText, subTextX, subTextY);
+          ctx.save();
+        }
+      }]
     });
     
     // Lazy loading for sections
