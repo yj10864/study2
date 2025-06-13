@@ -49,6 +49,33 @@
         },
       },
     }
+
+    // GitHub Activity Data - JSON Format for easy modification
+    const githubActivityData = [
+      { memberId: 1, commits: 128, prs: 24, issues: 16, reviews: 32 },
+      { memberId: 2, commits: 95, prs: 16, issues: 8, reviews: 28 },
+      { memberId: 3, commits: 112, prs: 21, issues: 13, reviews: 35 },
+      { memberId: 4, commits: 88, prs: 14, issues: 7, reviews: 22 },
+      { memberId: 5, commits: 143, prs: 28, issues: 19, reviews: 42 },
+      { memberId: 6, commits: 76, prs: 12, issues: 5, reviews: 18 },
+      { memberId: 7, commits: 105, prs: 19, issues: 12, reviews: 30 },
+      { memberId: 8, commits: 92, prs: 15, issues: 9, reviews: 25 },
+      { memberId: 9, commits: 121, prs: 23, issues: 15, reviews: 33 },
+      { memberId: 10, commits: 84, prs: 13, issues: 6, reviews: 20 },
+      { memberId: 11, commits: 135, prs: 25, issues: 18, reviews: 39 },
+      { memberId: 12, commits: 98, prs: 17, issues: 10, reviews: 26 },
+      { memberId: 13, commits: 95, prs: 18, issues: 12, reviews: 24 },
+      { memberId: 14, commits: 87, prs: 14, issues: 9, reviews: 19 },
+      { memberId: 15, commits: 133, prs: 26, issues: 17, reviews: 38 },
+      { memberId: 16, commits: 76, prs: 12, issues: 6, reviews: 15 },
+      { memberId: 17, commits: 102, prs: 19, issues: 11, reviews: 27 },
+      { memberId: 18, commits: 64, prs: 9, issues: 4, reviews: 12 },
+      { memberId: 19, commits: 91, prs: 15, issues: 8, reviews: 21 },
+      { memberId: 20, commits: 83, prs: 13, issues: 7, reviews: 18 },
+      // { memberId: 21, commits: 115, prs: 20, issues: 13, reviews: 29 },
+      { memberId: 22, commits: 79, prs: 11, issues: 5, reviews: 16 },
+      { memberId: 23, commits: 108, prs: 17, issues: 10, reviews: 23 }
+    ];
   </script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
@@ -595,6 +622,38 @@
         </div>
       </div>
     </section>
+
+    <!-- GitHub Activity Summary Table -->
+    <section id="github-summary" class="mb-16 scroll-mt-20">
+      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-6">
+        <h2 class="text-2xl font-bold mb-6 flex items-center">
+          <span class="mr-2">📋</span> GitHub Activity Summary
+        </h2>
+        
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+            <thead>
+              <tr>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Member ID</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Commits</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Pull Requests</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Issues</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Code Reviews</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Member ID</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Commits</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Pull Requests</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Issues</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Code Reviews</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200 dark:divide-gray-700 text-center" id="githubActivityTableBody">
+              <!-- Table content will be populated by JavaScript -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
   </main>
 
   <!-- Footer -->
@@ -1092,6 +1151,61 @@ const copilotData = [
       tables.forEach(table => {
         table.classList.add('border', 'border-gray-200', 'dark:border-gray-700', 'rounded-lg', 'overflow-hidden');
       });
+    });
+
+    // Populate GitHub Activity Table from JSON data
+    document.addEventListener('DOMContentLoaded', function() {
+      const tableBody = document.getElementById('githubActivityTableBody');
+      const rowCount = Math.ceil(githubActivityData.length / 2);
+      let html = '';
+
+      for (let i = 0; i < rowCount; i++) {
+        const leftIndex = i;
+        const rightIndex = i + rowCount;
+        const leftData = githubActivityData[leftIndex];
+        const rightData = githubActivityData[rightIndex];
+
+        html += '<tr>';
+
+        // Left column data
+        if (leftData) {
+          html += `
+            <td class="px-4 py-3">${leftData.memberId}</td>
+            <td class="px-4 py-3">${leftData.commits}</td>
+            <td class="px-4 py-3">${leftData.prs}</td>
+            <td class="px-4 py-3">${leftData.issues}</td>
+            <td class="px-4 py-3 border-r border-gray-300 dark:border-gray-600">${leftData.reviews}</td>
+          `;
+        } else {
+          html += '<td class="px-4 py-3 border-r border-gray-300 dark:border-gray-600" colspan="5"></td>';
+        }
+
+        // Right column data
+        if (rightData) {
+          html += `
+            <td class="px-4 py-3">${rightData.memberId}</td>
+            <td class="px-4 py-3">${rightData.commits}</td>
+            <td class="px-4 py-3">${rightData.prs}</td>
+            <td class="px-4 py-3">${rightData.issues}</td>
+            <td class="px-4 py-3">${rightData.reviews}</td>
+          `;
+        } else {
+          html += '<td class="px-4 py-3 border-r border-gray-300 dark:border-gray-600" colspan="5"></td>';
+        }
+
+        html += '</tr>';
+      }
+
+      // Add footer row with date
+      html += `
+        <tr>
+          <td colspan="10" class="px-4 py-3 text-center text-gray-500 dark:text-gray-400">
+            Data current as of: 2025-06-30
+          </td>
+        </tr>
+      `;
+
+      tableBody.innerHTML = html;
     });
   </script>
 </body>
